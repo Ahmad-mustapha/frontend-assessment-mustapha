@@ -24,10 +24,6 @@ export default async function SearchPage({ searchParams }: Props) {
             {/* Search Summary Header with Filter Side-by-Side */}
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                 <div className="flex flex-col gap-2">
-                    <span className="flex items-center gap-2 text-brand-red text-xs font-black uppercase tracking-[0.2em]">
-                        <Search className="w-4 h-4" />
-                        Query Results
-                    </span>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white">
                         Showing results for "<span className="text-brand-red">{query}</span>"
                     </h1>
