@@ -1,13 +1,8 @@
-name = "streamfix-content-explorer"
+name = "frontend-assessment-mustapha"
 pages_build_output_dir = ".open-next"
-main = ".open-next/worker.js"
 compatibility_date = "2024-04-01"
-# Enable node_js compatibility for Next.js
 compatibility_flags = ["nodejs_compat"]
 
-[site]
-bucket = ".open-next/assets"
-
+# You can add your ENV variable here too if you prefer
 [vars]
-# Add your NEXT_PUBLIC_TMDB_ACCESS_TOKEN here for runtime access if needed
 # NEXT_PUBLIC_TMDB_ACCESS_TOKEN = "your_token_here"
