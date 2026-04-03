@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+export const runtime = 'edge';
 import { tmdb } from '@/lib/tmdb';
 import FeaturedHero from '@/components/FeaturedHero';
 import MovieGrid from '@/components/MovieGrid';

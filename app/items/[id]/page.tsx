@@ -1,4 +1,5 @@
 import React from 'react';
+export const runtime = 'edge';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { tmdb } from '@/lib/tmdb';
@@ -35,7 +36,7 @@ export default async function MovieDetailPage({ params }: Props) {
     const backdropUrl = tmdb.getImageUrl(movie.backdrop_path, 'backdrop');
     const posterUrl = tmdb.getImageUrl(movie.poster_path);
     const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
-    
+
     // Fetch similar movies
     const similarData = await tmdb.getSimilarMovies(id);
 
@@ -57,11 +58,11 @@ export default async function MovieDetailPage({ params }: Props) {
 
             <div className="flex flex-col gap-6">
 
-                <Breadcrumbs 
+                <Breadcrumbs
                     items={[
                         { label: 'HOME', href: '/' },
                         { label: movie.title }
-                    ]} 
+                    ]}
                 />
             </div>
 
@@ -83,7 +84,7 @@ export default async function MovieDetailPage({ params }: Props) {
                     )}
                 </div>
 
-                {/* Right: Info Section */}
+
                 <div className="space-y-10">
                     <div className="space-y-4">
                         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
@@ -133,9 +134,9 @@ export default async function MovieDetailPage({ params }: Props) {
                     {/* Similar Movies Section (Right Column) */}
                     {similarData.results && similarData.results.length > 0 && (
                         <div className="pt-8 mt-8 border-t border-white/10">
-                            <MovieGrid 
-                                movies={similarData.results.slice(0, 10)} 
-                                title="More Like This" 
+                            <MovieGrid
+                                movies={similarData.results.slice(0, 10)}
+                                title="More Like This"
                             />
                         </div>
                     )}

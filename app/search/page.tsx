@@ -1,4 +1,5 @@
 import React from 'react';
+export const runtime = 'edge';
 import { tmdb } from '@/lib/tmdb';
 import MovieGrid from '@/components/MovieGrid';
 import Pagination from '@/components/Pagination';

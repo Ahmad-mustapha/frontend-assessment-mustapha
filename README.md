@@ -56,6 +56,11 @@ To ensure a **Zero-Setup** experience for reviewers, I implemented a custom "Moc
 *   **Unblocking the Initial Render:** In `app/page.tsx`, the latency-heavy `getPopular` fetch function (which handles pagination) is decoupled into its own async Server Component (`<PopularMoviesSection />`) and wrapped in a React 18 `<Suspense>` boundary.
 *   **Zero Layout Shift:** By streaming the `FeaturedHero` to the client instantly and providing a visually identical `<PopularSkeleton />` for the slower grid, the page maintains instantaneous interactivity and essentially eliminates Cumulative Layout Shifts (CLS), securing max performance points.
 
+### 5. Cloudflare Workers Deployment (Bonus B-1)
+*   **OpenNext Cloudflare Adapter:** We utilize the `@opennextjs/cloudflare` adapter to transform the Next.js build into a high-performance Worker-compatible bundle.
+*   **Edge-Level Caching:** By setting the `runtime = 'edge'` in our layout, we leverage the Workers Cache API. The `next/fetch` cache (e.g., `revalidate: 3600`) maps directly to Cloudflare's global edge cache.
+*   **Cache Status Visibility:** Listing page responses include a visible `cf-cache-status` (and `x-cache-status`) header (HIT/MISS) allowing for easy verification of edge performance via browser DevTools or `curl`.
+
 ---
 
 ## 🚀 Performance Optimizations
@@ -73,6 +78,7 @@ To ensure a **Zero-Setup** experience for reviewers, I implemented a custom "Moc
 2.  **Configure API:** Create a `.env.local` file with your TMDB Read Access Token.
 3.  **Run Dev:** `npm run dev`
 4.  **Test:** `npm test`
+5.  **Deploy to Cloudflare:** `npm run deploy`
 
 ---
 

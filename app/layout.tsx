@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+export const runtime = 'edge';
 import "./globals.css";
 import DashboardLayout from "@/components/DashboardLayout";
 
