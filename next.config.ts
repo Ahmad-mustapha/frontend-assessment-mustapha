@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: process.env.NODE_ENV === 'development', // Bypass optimization in dev to avoid proxy timeouts
     remotePatterns: [
       {
         protocol: "https",

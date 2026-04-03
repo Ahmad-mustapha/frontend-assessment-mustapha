@@ -1,16 +1,14 @@
 import React from 'react';
-export const runtime = 'edge';
+
 import { tmdb } from '@/lib/tmdb';
 import MovieGrid from '@/components/MovieGrid';
 import Pagination from '@/components/Pagination';
 import GenreFilters from '@/components/GenreFilters';
 import { Search, Film } from 'lucide-react';
 
-interface Props {
-    searchParams: Promise<{ q?: string; page?: string; genre?: string }>;
-}
-
-export default async function SearchPage({ searchParams }: Props) {
+import { SearchPageProps } from '@/types/params';
+ 
+ export default async function SearchPage({ searchParams }: SearchPageProps) {
     const { q: query, page: pageStr, genre } = await searchParams;
     const page = Number(pageStr) || 1;
 

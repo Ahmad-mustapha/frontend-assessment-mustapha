@@ -55,10 +55,16 @@ export default function FeaturedHero({ movie }: FeaturedHeroProps) {
                         <Play className="w-3.5 h-3.5 fill-white" />
                         Watch Now
                     </Link>
-                    <button className="flex items-center justify-center w-10 h-10 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/10">
+                    <button 
+                        aria-label="Download movie"
+                        className="flex items-center justify-center w-10 h-10 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/10"
+                    >
                         <Download className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </button>
-                    <button className="flex items-center justify-center w-10 h-10 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/10">
+                    <button 
+                        aria-label="Add to watchlist"
+                        className="flex items-center justify-center w-10 h-10 md:w-11 md:h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/10"
+                    >
                         <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </button>
                 </div>

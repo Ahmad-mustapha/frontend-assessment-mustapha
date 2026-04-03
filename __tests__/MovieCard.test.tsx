@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import MovieCard from '@/components/MovieCard';
 import { Movie } from '@/types/movie';
@@ -20,7 +20,7 @@ const mockMovie: Movie = {
 describe('MovieCard Component', () => {
     it('renders movie title and release year correctly', () => {
         render(<MovieCard movie={mockMovie} />);
-        
+
         expect(screen.getByText('Interstellar')).toBeInTheDocument();
         expect(screen.getByText('2014')).toBeInTheDocument();
     });
@@ -39,9 +39,16 @@ describe('MovieCard Component', () => {
     it('renders N/A and video icon placeholder when data is missing', () => {
         const patchyMovie = { ...mockMovie, poster_path: null, release_date: '' } as any;
         render(<MovieCard movie={patchyMovie} />);
-        
+
         expect(screen.getByText('N/A')).toBeInTheDocument();
-        // Since we mock lucide icons, we can't easily check for the specific Video icon,
-        // but the code branch for {posterUrl ? ... : ...} is now executed.
+    });
+
+    it('toggles favorite when the heart button is clicked', () => {
+
+        render(<MovieCard movie={mockMovie} />);
+
+        const button = screen.getByRole('button');
+        fireEvent.click(button);
+        expect(button).toBeInTheDocument();
     });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-export const runtime = 'edge';
+
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { tmdb } from '@/lib/tmdb';
@@ -8,12 +8,10 @@ import MovieGrid from '@/components/MovieGrid';
 import { Star, Clock, Calendar, Play, Plus, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-interface Props {
-    params: Promise<{ id: string }>;
-}
+import { MovieDetailPageProps } from '@/types/params';
 
 // Metadata generation for SEO and social sharing
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: MovieDetailPageProps): Promise<Metadata> {
     const { id } = await params;
     const movie = await tmdb.getMovieDetails(id);
     const posterUrl = tmdb.getImageUrl(movie.poster_path);
@@ -29,20 +27,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-// Movie detail view implementation
-export default async function MovieDetailPage({ params }: Props) {
+export default async function MovieDetailPage({ params }: MovieDetailPageProps) {
     const { id } = await params;
-    const movie = await tmdb.getMovieDetails(id);
+    const [movie, similarData] = await Promise.all([
+        tmdb.getMovieDetails(id),
+        tmdb.getSimilarMovies(id)
+    ]);
+
     const backdropUrl = tmdb.getImageUrl(movie.backdrop_path, 'backdrop');
     const posterUrl = tmdb.getImageUrl(movie.poster_path);
-    const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
-
-    // Fetch similar movies
-    const similarData = await tmdb.getSimilarMovies(id);
+    const releaseYear = tmdb.getYear(movie.release_date);
 
     return (
         <div className="relative animate-in fade-in duration-500">
-            {/* Background Layer (Backdrop) */}
             <div className="fixed inset-0 pointer-events-none -z-10">
                 {backdropUrl && (
                     <Image
@@ -68,7 +65,6 @@ export default async function MovieDetailPage({ params }: Props) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 lg:gap-16 items-start mt-8">
-                {/* Left: Poster Section */}
                 <div className="relative aspect-[2/3] w-full rounded-2xl bg-bg-card border border-white/5 overflow-hidden shadow-lg group">
                     {posterUrl ? (
                         <Image
@@ -96,8 +92,8 @@ export default async function MovieDetailPage({ params }: Props) {
                         <div className="flex items-center flex-wrap gap-4 text-sm font-semibold text-slate-400">
                             <div className="flex items-center gap-1.5 text-amber-500">
                                 <Star className="w-4 h-4 fill-amber-500" />
-                                <span className="text-white font-bold">{movie.vote_average.toFixed(1)}</span>
-                                <span className="opacity-50 font-normal">({movie.vote_count.toLocaleString()})</span>
+                                <span className="text-white font-bold">{movie.vote_average?.toFixed(1) ?? 'N/A'}</span>
+                                <span className="opacity-50 font-normal">({movie.vote_count?.toLocaleString() ?? 0})</span>
                             </div>
                             <span className="text-slate-700">•</span>
                             <div className="flex items-center gap-1.5">
@@ -107,7 +103,7 @@ export default async function MovieDetailPage({ params }: Props) {
                             <span className="text-slate-700">•</span>
                             <div className="flex items-center gap-1.5">
                                 <Clock className="w-4 h-4 opacity-70" />
-                                {movie.popularity.toFixed(0)} Popularity
+                                {movie.popularity?.toFixed(0) ?? '—'} Popularity
                             </div>
                         </div>
                     </div>
@@ -119,7 +115,6 @@ export default async function MovieDetailPage({ params }: Props) {
                         </p>
                     </div>
 
-                    {/* Action Palette */}
                     <div className="flex items-center flex-wrap gap-4 pt-4">
                         <button className="flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold text-sm hover:bg-white/90 transition-all active:scale-95 shadow-md">
                             <Play className="w-4 h-4 fill-black" />
@@ -133,7 +128,6 @@ export default async function MovieDetailPage({ params }: Props) {
                         </button>
                     </div>
 
-                    {/* Similar Movies Section (Right Column) */}
                     {similarData.results && similarData.results.length > 0 && (
                         <div className="pt-8 mt-8 border-t border-white/10">
                             <MovieGrid

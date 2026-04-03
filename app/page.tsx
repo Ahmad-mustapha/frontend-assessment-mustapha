@@ -1,13 +1,13 @@
 import React, { Suspense } from 'react';
-export const runtime = 'edge';
+
 import { tmdb } from '@/lib/tmdb';
 import FeaturedHero from '@/components/FeaturedHero';
 import MovieGrid from '@/components/MovieGrid';
 import Pagination from '@/components/Pagination';
 
-type Props = {
-    searchParams: Promise<{ page?: string }>;
-};
+import UpcomingSection from '@/components/UpcomingSection';
+
+import { HomePageProps } from '@/types/params';
 
 function PopularSkeleton() {
     return (
@@ -26,23 +26,22 @@ async function PopularMoviesSection({ page }: { page: number }) {
     const popularData = await tmdb.getPopular(page);
     return (
         <div className="space-y-12">
-            <MovieGrid 
-                movies={popularData.results} 
-                title="Popular Movies" 
+            <MovieGrid
+                movies={popularData.results}
+                title="Popular Movies"
             />
-            <Pagination 
-                currentPage={page} 
-                totalPages={Math.min(popularData.total_pages, 500)} // TMDB limit
+            <Pagination
+                currentPage={page}
+                totalPages={Math.min(popularData.total_pages, 500)}
             />
         </div>
     );
 }
 
-export default async function Home({ searchParams }: Props) {
+export default async function Home({ searchParams }: HomePageProps) {
     const { page: pageStr } = await searchParams;
     const page = Number(pageStr) || 1;
 
-    // Fetch ONLY initial trending movie data here, preventing blocking of the first paint
     const trendingData = await tmdb.getTrending();
     const featuredMovie = trendingData.results[0];
 
@@ -56,11 +55,14 @@ export default async function Home({ searchParams }: Props) {
                     <PopularMoviesSection page={page} />
                 </Suspense>
 
-                {/* Second row for visual variety */}
-                <MovieGrid 
-                    movies={trendingData.results.slice(1, 11)} 
-                    title="Trending Today" 
+                {/* Second row for visual variety (Server) */}
+                <MovieGrid
+                    movies={trendingData.results.slice(1, 11)}
+                    title="Trending Today"
                 />
+
+                {/* Third row (Client: TanStack Query + Code Splitting) */}
+                <UpcomingSection />
             </div>
         </div>
     );

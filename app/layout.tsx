@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-export const runtime = 'edge';
+
 import "./globals.css";
 import DashboardLayout from "@/components/DashboardLayout";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${inter.className} antialiased bg-bg-main text-white`}>
-        <DashboardLayout>
-          {children}
-        </DashboardLayout>
+        <Providers>
+          <DashboardLayout>
+            {children}
+          </DashboardLayout>
+        </Providers>
       </body>
     </html>
   );

@@ -50,3 +50,8 @@ next-env.d.ts
 # AI Configurations
 AGENTS.md
 CLAUDE.md
+
+# Scratch files and logs
+coverage.txt
+summary.json
+*.log

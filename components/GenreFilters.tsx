@@ -5,7 +5,7 @@ import { GenreFiltersProps } from '@/types/ui';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 const GENRES = [
-    'All', 'Action', 'Adventure', 'Animation', 'Comedy', 
+    'All', 'Action', 'Adventure', 'Animation', 'Comedy',
     'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy'
 ];
 
@@ -14,7 +14,6 @@ export default function GenreFilters({ activeGenre, onGenreSelect }: GenreFilter
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // Default to 'All' if activeGenre is not provided, or get from SearchParams if in URL mode
     const currentGenre = activeGenre || searchParams.get('genre') || 'All';
 
     const handleGenreSelect = (genre: string) => {
@@ -23,7 +22,6 @@ export default function GenreFilters({ activeGenre, onGenreSelect }: GenreFilter
             return;
         }
 
-        // Default: Update URL Search Params
         const params = new URLSearchParams(searchParams.toString());
         if (genre === 'All') {
             params.delete('genre');
@@ -41,11 +39,10 @@ export default function GenreFilters({ activeGenre, onGenreSelect }: GenreFilter
                         <button
                             onClick={() => handleGenreSelect(genre)}
                             aria-current={currentGenre === genre ? 'page' : undefined}
-                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap border transition-all duration-300 ${
-                                currentGenre === genre
-                                ? 'bg-brand-red border-brand-red text-white shadow-lg shadow-brand-red/20'
-                                : 'bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:border-white/10'
-                            }`}
+                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest whitespace-nowrap border transition-all duration-300 ${currentGenre === genre
+                                    ? 'bg-brand-red border-brand-red text-white shadow-lg shadow-brand-red/20'
+                                    : 'bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:border-white/10'
+                                }`}
                         >
                             {genre}
                         </button>

@@ -11,6 +11,7 @@ export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobil
     const debouncedValue = useDebounce(inputValue, 350);
     const router = useRouter();
 
+    // Debounce search input and sync with URL to keep search results shareable
     useEffect(() => {
         if (debouncedValue.trim()) {
             router.push(`/search?q=${encodeURIComponent(debouncedValue.trim())}`);
@@ -53,6 +54,7 @@ export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobil
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         placeholder="Search movies..."
+                        aria-label="Search for a movie"
                         className="w-full h-full bg-transparent text-sm text-white placeholder-slate-500 outline-none font-medium"
                     />
                 </div>

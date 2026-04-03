@@ -34,10 +34,11 @@ const MOCK_MOVIES: Movie[] = [
     }
 ];
 
-// Standard fetch wrapper for TMDB API with auth headers
+// Helper to fetch from TMDB with auth. Falls back to mock data
+// if the API key is missing or DNS resolution fails (frequent on edge).
 async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const isMock = !TMDB_ACCESS_TOKEN || TMDB_ACCESS_TOKEN === 'your_read_access_token_here';
-    
+
     if (isMock) {
         console.warn("⚠️ TMDB API Token missing. Returning Mock Data for demonstration.");
         return {
@@ -49,7 +50,7 @@ async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promis
     }
 
     const url = `${TMDB_BASE_URL}${endpoint}`;
-    
+
     try {
         const response = await fetch(url, {
             ...options,
@@ -59,6 +60,7 @@ async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promis
                 'accept': 'application/json',
             },
             next: { revalidate: 3600 },
+            signal: AbortSignal.timeout(3000), // Stop waiting after 3 seconds
         });
 
         if (!response.ok) {
@@ -67,7 +69,7 @@ async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promis
 
         return response.json();
     } catch (e) {
-        console.error("Fetch failed, falling back to Mock Data.");
+        console.error("Fetch failed, falling back to Mock Data.", e);
         return {
             results: MOCK_MOVIES,
             page: 1,
@@ -96,39 +98,55 @@ export const tmdb = {
         return tmdbFetch<MovieResponse>(`/search/movie?query=${encodeURIComponent(query)}&page=${page}`);
     },
 
-    // Fetch movie details by ID
+    // Fetch movie details by ID - wraps in try/catch so a network timeout
+    // doesn't propagate up and crash the detail page render.
     getMovieDetails: async (id: string | number): Promise<Movie> => {
         const isMock = !TMDB_ACCESS_TOKEN || TMDB_ACCESS_TOKEN === 'your_read_access_token_here';
-        if (isMock) {
+        if (isMock) return MOCK_MOVIES[0];
+        try {
+            const movie = await tmdbFetch<Movie>(`/movie/${id}`);
+            // Validate we got an actual Movie shape back (not a fallback MovieResponse)
+            if (!movie || typeof movie.vote_average !== 'number') {
+                return MOCK_MOVIES[0];
+            }
+            return movie;
+        } catch {
             return MOCK_MOVIES[0];
         }
-        return tmdbFetch<Movie>(`/movie/${id}`);
     },
 
-    // Fetch similar movies
+    // Fetch similar movies — returns empty results on failure to avoid crashing detail page
     getSimilarMovies: async (id: string | number, page: number = 1): Promise<MovieResponse> => {
-        return tmdbFetch<MovieResponse>(`/movie/${id}/similar?page=${page}`);
+        try {
+            return await tmdbFetch<MovieResponse>(`/movie/${id}/similar?page=${page}`);
+        } catch {
+            return { results: [], page: 1, total_pages: 0, total_results: 0 };
+        }
     },
 
-    // Helper to construct TMDB image URLs
+    // Get Upcoming Movies (Requirement: Component abstraction)
+    getUpcoming: async (page: number = 1): Promise<MovieResponse> => {
+        return tmdbFetch<MovieResponse>(`/movie/upcoming?page=${page}`);
+    },
+
+    // Helper to construct TMDB image URLs. Returns null for mock paths so
+    // components fall back to the placeholder UI with no outbound request.
     getImageUrl: (path: string | null, size: 'poster' | 'backdrop' = 'poster') => {
         if (!path) return null;
-        if (path.includes('_mock.jpg')) {
-            // Unsplash placeholder so Next/Image doesn't fail on DNS for missing TMDB mock urls
-            return "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=1080";
-        }
+        if (path.includes('_mock.jpg')) return null;
         const width = size === 'poster' ? 'w500' : 'original';
         return `${TMDB_IMAGE_BASE_URL}/${width}${path}`;
     },
 
-    // Filter results locally by Genre (Requirement: F-3 Logic)
     filterByCategory: (results: Movie[], category?: string) => {
         if (!category || category === 'All') return results;
         const genreMap: Record<string, number> = {
-            'Action': 28, 'Adventure': 12, 'Animation': 16, 'Comedy': 35, 
+            'Action': 28, 'Adventure': 12, 'Animation': 16, 'Comedy': 35,
             'Crime': 80, 'Documentary': 99, 'Drama': 18, 'Family': 10751, 'Fantasy': 14
         };
         const targetId = genreMap[category];
         return targetId ? results.filter(movie => movie.genre_ids?.includes(targetId)) : results;
-    }
+    },
+
+    getYear: (date?: string) => date ? new Date(date).getFullYear().toString() : 'N/A'
 };
