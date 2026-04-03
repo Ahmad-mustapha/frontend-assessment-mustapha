@@ -7,7 +7,7 @@ import { BreadcrumbsProps } from '@/types/ui';
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
     return (
-        <nav className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+        <nav className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider mb-8">
             {items.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
                     {item.href ? (

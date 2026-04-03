@@ -5,24 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     Home,
-    TrendingUp,
-    PlusCircle,
-    Video,
-    List,
-    Settings,
-    Phone,
-    LogOut,
     X
 } from 'lucide-react';
 import { NavItem, SidebarProps } from '@/types/layout';
 
 const navItems: NavItem[] = [
-    { label: 'HOME', href: '/', icon: Home },
-    { label: 'TRENDING', href: '/trending', icon: TrendingUp },
-    { label: 'DISCOVER', href: '/discover', icon: PlusCircle },
-    { label: 'MOVIES', href: '/movies', icon: Video },
-    { label: 'WATCHLIST', href: '/watchlist', icon: List },
-    { label: 'SUPPORT', href: '/support', icon: Phone },
+    { label: 'HOME', href: '/', icon: Home }
 ];
 
 export default function Sidebar({ isOpen, isCollapsed, onClose }: SidebarProps) {
@@ -82,19 +70,6 @@ export default function Sidebar({ isOpen, isCollapsed, onClose }: SidebarProps) 
                     })}
                 </nav>
 
-                <div className={`py-6 border-t border-white/5 space-y-1 ${isCollapsed ? 'px-2' : 'px-4'}`}>
-                    <Link href="/settings" className={`flex items-center rounded-lg text-slate-600 hover:text-white transition-all ${isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-4 py-2'
-                        }`}>
-                        <Settings className="w-4 h-4" />
-                        {!isCollapsed && <span className="text-xs font-bold">Preferences</span>}
-                    </Link>
-
-                    <button className={`flex items-center w-full rounded-lg text-slate-700 hover:text-brand-red transition-all mt-4 border border-transparent hover:border-brand-red/20 ${isCollapsed ? 'justify-center h-10 w-10 mx-auto' : 'gap-3 px-4 py-2.5'
-                        }`}>
-                        <LogOut className="w-4 h-4" />
-                        {!isCollapsed && <span className="text-[10px] font-black uppercase tracking-wider">Exit Hub</span>}
-                    </button>
-                </div>
             </aside>
         </>
     );

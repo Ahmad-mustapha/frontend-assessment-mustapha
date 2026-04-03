@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import { tmdb } from '@/lib/tmdb';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import MovieGrid from '@/components/MovieGrid';
 import { Star, Clock, Calendar, Play, Plus, Share2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -34,6 +35,9 @@ export default async function MovieDetailPage({ params }: Props) {
     const backdropUrl = tmdb.getImageUrl(movie.backdrop_path, 'backdrop');
     const posterUrl = tmdb.getImageUrl(movie.poster_path);
     const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+    
+    // Fetch similar movies
+    const similarData = await tmdb.getSimilarMovies(id);
 
     return (
         <div className="relative animate-in fade-in duration-500">
@@ -52,17 +56,13 @@ export default async function MovieDetailPage({ params }: Props) {
             </div>
 
             <div className="flex flex-col gap-6">
-                <Link 
-                    href="/"
-                    className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group w-fit"
-                >
-                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/20">
-                        <ArrowLeft className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-widest">Back to Library</span>
-                </Link>
 
-                <Breadcrumbs items={[{ label: movie.title }]} />
+                <Breadcrumbs 
+                    items={[
+                        { label: 'HOME', href: '/' },
+                        { label: movie.title }
+                    ]} 
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 lg:gap-16 items-start mt-8">
@@ -129,6 +129,16 @@ export default async function MovieDetailPage({ params }: Props) {
                             <Share2 className="w-5 h-5" />
                         </button>
                     </div>
+
+                    {/* Similar Movies Section (Right Column) */}
+                    {similarData.results && similarData.results.length > 0 && (
+                        <div className="pt-8 mt-8 border-t border-white/10">
+                            <MovieGrid 
+                                movies={similarData.results.slice(0, 10)} 
+                                title="More Like This" 
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,13 +1,21 @@
 'use client';
 
-import React from 'react';
-import { Search, Bell, ChevronLeft, ChevronRight, Menu, User } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { TopBarProps } from '@/types/layout';
 
 export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobileSidebar }: TopBarProps) {
     const [inputValue, setInputValue] = React.useState('');
     const debouncedValue = useDebounce(inputValue, 350);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (debouncedValue.trim()) {
+            router.push(`/search?q=${encodeURIComponent(debouncedValue.trim())}`);
+        }
+    }, [debouncedValue, router]);
 
     return (
         <header className={`fixed top-0 right-0 h-16 md:h-20 flex items-center justify-between px-4 md:px-8 bg-black/80 backdrop-blur-md border-b border-white/5 z-40 transition-all duration-300 ease-out ${
@@ -42,30 +50,14 @@ export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobil
                         type="text" 
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="SEARCH EVERYTHING"
-                        className="w-full h-11 bg-white/[0.03] border border-white/10 rounded-lg pl-12 pr-12 text-xs text-white placeholder-slate-600 outline-none focus:border-brand-red/30 focus:bg-white/[0.05] transition-all font-bold tracking-widest uppercase"
+                        placeholder="Search movies..."
+                        className="w-full h-11 bg-white/[0.03] border border-white/10 rounded-lg pl-12 pr-12 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-red/30 focus:bg-white/[0.05] transition-all font-medium"
                     />
                 </div>
             </div>
 
-            {/* Right: Notifications & Profile */}
-            <div className="flex items-center gap-3 md:gap-6">
-                <button className="relative p-2 text-slate-500 hover:text-white transition-colors group">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-brand-red rounded-full border border-bg-main"></span>
-                </button>
-
-                <div className="flex items-center gap-2 md:gap-3 pl-3 md:pl-6 border-l border-white/5 group cursor-pointer">
-                    <div className="text-right hidden sm:block">
-                        <p className="text-xs font-black text-white group-hover:text-brand-red uppercase tracking-tight">
-                            {user?.name || 'LOUISE B'}
-                        </p>
-                    </div>
-                    <div className="w-8 h-8 md:w-9 md:h-9 rounded bg-[#1A1A1A] border border-white/10 flex items-center justify-center group-hover:border-brand-red/50 shadow-xl transition-all">
-                        <User className="w-4 h-4 text-slate-600" />
-                    </div>
-                </div>
-            </div>
+            {/* Right: Empty space to balance or additional actions if ever needed */}
+            <div className="w-8 md:w-20 hidden md:block" />
         </header>
     );
 }

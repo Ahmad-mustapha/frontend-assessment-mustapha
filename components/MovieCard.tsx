@@ -37,18 +37,18 @@ export default function MovieCard({ movie, priority = false }: MovieCardProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent group-hover:from-black/100 transition-all" />
 
             {/* Item Metadata */}
-            <div className="absolute bottom-0 left-0 right-0 p-3 space-y-0.5">
-                <h3 className="text-white font-black leading-tight line-clamp-1 text-[11px] sm:text-xs uppercase tracking-tight">
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 space-y-2">
+                <h3 className="text-white font-bold leading-snug line-clamp-2 text-xs sm:text-sm tracking-wide">
                     {movie.title}
                 </h3>
                 
-                <div className="flex items-center justify-between text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                    <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1 text-brand-red">
-                            <Star className="w-2.5 h-2.5 fill-brand-red" />
+                <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 tracking-widest">
+                    <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1.5 text-amber-500">
+                            <Star className="w-3 h-3 fill-amber-500" />
                             {movie.vote_average.toFixed(1)}
                         </span>
-                        <span className="opacity-20 text-white italic">{releaseYear}</span>
+                        <span className="opacity-50 text-white">{releaseYear}</span>
                     </div>
                 </div>
             </div>
