@@ -20,8 +20,14 @@ export default async function SearchPage({ searchParams }: Props) {
 
     // Filter results locally if a genre is selected
     if (genre && genre !== 'All') {
-        // In a real production app, we would use TMDB's /discover endpoint 
-        // to filter by genre_id, but here we show the filtered UI state.
+        const genreMap: Record<string, number> = {
+            'Action': 28, 'Adventure': 12, 'Animation': 16, 'Comedy': 35, 
+            'Crime': 80, 'Documentary': 99, 'Drama': 18, 'Family': 10751, 'Fantasy': 14
+        };
+        const targetId = genreMap[genre as string];
+        if (targetId) {
+            results = results.filter(movie => movie.genre_ids?.includes(targetId));
+        }
     }
 
     return (

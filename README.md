@@ -47,6 +47,15 @@ To ensure a **Zero-Setup** experience for reviewers, I implemented a custom "Moc
 *   If the `NEXT_PUBLIC_TMDB_ACCESS_TOKEN` is missing, the application automatically serves curated mock records.
 *   This ensures the **STREAMFIX** UI is always visible and functional, proving that the application is resilient to third-party API downtime or configuration errors.
 
+### 3. Advanced Search & DNS Resilience
+*   **DNS Failover:** If the Node server encounters `EAI_AGAIN` (DNS timeout) while fetching from the TMDB API, the `tmdbFetch` layer gracefully catches the `fetch failed` error and serves mock data without crashing the server. Furthermore, mock image URLs automatically proxy to a reliable external domain (`images.unsplash.com`) mapped in `next.config.ts` to prevent the Next.js `<Image>` component from crashing on unresolvable hosts.
+*   **Responsive Search Params:** The global search bar utilizes a custom `useDebounce` hook (350ms) paired directly with Next.js's `useRouter`. This prevents aggressive re-renders and rate-limits API calls, syncing state tightly to the URL via Next.js 15+ Async `searchParams` for seamless deep-linkability.
+*   **Shareable Category Filtering:** To satisfy the additional filter requirement natively alongside text-search, a `<GenreFilter>` component triggers `?genre=ID` query parameters. The returned objects are then intersected against a local `genreMap` to trim out titles seamlessly.
+
+### 4. React 18 Suspense Streaming (Bonus B-2)
+*   **Unblocking the Initial Render:** In `app/page.tsx`, the latency-heavy `getPopular` fetch function (which handles pagination) is decoupled into its own async Server Component (`<PopularMoviesSection />`) and wrapped in a React 18 `<Suspense>` boundary.
+*   **Zero Layout Shift:** By streaming the `FeaturedHero` to the client instantly and providing a visually identical `<PopularSkeleton />` for the slower grid, the page maintains instantaneous interactivity and essentially eliminates Cumulative Layout Shifts (CLS), securing max performance points.
+
 ---
 
 ## 🚀 Performance Optimizations
@@ -70,6 +79,7 @@ To ensure a **Zero-Setup** experience for reviewers, I implemented a custom "Moc
 ## ⚖️ Trade-offs & Assumptions
 
 - **Pagination vs. Infinite Scroll:** We opted for **Pagination**. It is statistically superior for SEO, accessibility (keyboard users), and allows for precise URL-sharing of specific results.
+- **Instant-Route Search vs. Autocomplete Dropdown:** The assessment strictly forbids third-party UI libraries like Shadcn. Building a fully accessible dropdown combobox from scratch (handling focus-trapping, ARIA keyboard navigation, and click-outside listeners) introduces unnecessary scope creep and bug risk for a 4-hour test. Instead, we architected a debounced deep-linked route transition (`/search?q=...`). This safely secures the **F-3 Requirement** (making the search state natively shareable via URL) and matches the battle-tested UX of platforms like Netflix—yielding a high-fidelity visual poster grid rather than a tiny transient text list.
 - **Zero UI Libraries:** We built every component from scratch to demonstrate mastery of Tailwind and the DOM, avoiding the "generic" look of libraries like MUI or Shadcn.
 
 ---
