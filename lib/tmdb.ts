@@ -39,14 +39,14 @@ const MOCK_MOVIES: Movie[] = [
 async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
     const fallbackData = {
-        results: MOCK_MOVIES,
+        results: [],
         page: 1,
         total_pages: 1,
-        total_results: MOCK_MOVIES.length
+        total_results: 0
     } as unknown as T;
 
     if (!token || token.includes('YOUR_ACCESS_TOKEN')) {
-        console.warn('CRITICAL: NEXT_PUBLIC_TMDB_ACCESS_TOKEN is missing. Falling back to MOCK DATA.');
+        console.warn('CRITICAL: NEXT_PUBLIC_TMDB_ACCESS_TOKEN is missing. Falling back to empty data.');
         return fallbackData;
     }
 
