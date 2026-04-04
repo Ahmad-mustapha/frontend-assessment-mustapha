@@ -2,7 +2,7 @@
 
 A high-performance content discovery application built with **Next.js 15**, **React 19**, and the **TMDB API**.
 
-**Live Demo:** [Pending Link]
+**Live Demo:** [https://frontend-assessment-mustapha.ahmadishola12.workers.dev](https://frontend-assessment-mustapha.ahmadishola12.workers.dev)
 
 ---
 

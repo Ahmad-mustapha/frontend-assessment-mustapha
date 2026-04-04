@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:cf": "opennextjs-cloudflare build && node scripts/move-worker.mjs",
+    "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "npm run build:cf && npx wrangler pages deploy .open-next",
+    "deploy": "npm run build:cf && npx wrangler deploy",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
   },

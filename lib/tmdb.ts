@@ -37,16 +37,17 @@ const MOCK_MOVIES: Movie[] = [
 // Helper to fetch from TMDB with auth. Falls back to mock data
 // if the API key is missing or DNS resolution fails (frequent on edge).
 async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const isMock = !TMDB_ACCESS_TOKEN || TMDB_ACCESS_TOKEN === 'your_read_access_token_here';
+    const token = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
+    const fallbackData = {
+        results: MOCK_MOVIES,
+        page: 1,
+        total_pages: 1,
+        total_results: MOCK_MOVIES.length
+    } as unknown as T;
 
-    if (isMock) {
-        console.warn("⚠️ TMDB API Token missing. Returning Mock Data for demonstration.");
-        return {
-            results: MOCK_MOVIES,
-            page: 1,
-            total_pages: 1,
-            total_results: MOCK_MOVIES.length
-        } as unknown as T;
+    if (!token || token.includes('YOUR_ACCESS_TOKEN')) {
+        console.warn('CRITICAL: NEXT_PUBLIC_TMDB_ACCESS_TOKEN is missing. Falling back to MOCK DATA.');
+        return fallbackData;
     }
 
     const url = `${TMDB_BASE_URL}${endpoint}`;
@@ -54,13 +55,13 @@ async function tmdbFetch<T>(endpoint: string, options: RequestInit = {}): Promis
     try {
         const response = await fetch(url, {
             ...options,
+            signal: AbortSignal.timeout(5000), // More generous timeout for cold starts
+            next: { revalidate: 3600 },
             headers: {
                 ...options.headers,
-                'Authorization': `Bearer ${TMDB_ACCESS_TOKEN}`,
-                'accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
             },
-            next: { revalidate: 3600 },
-            signal: AbortSignal.timeout(3000), // Stop waiting after 3 seconds
         });
 
         if (!response.ok) {
