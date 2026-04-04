@@ -45,9 +45,9 @@ export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobil
             </div>
 
             {/* Middle: Search bar (Geometric style) */}
-            <div className="flex-1 max-w-xl px-4 md:px-8 hidden md:block">
-                <div className="flex items-center gap-3 h-11 bg-white/[0.03] border border-white/10 rounded-xl px-4 focus-within:border-brand-red/30 focus-within:bg-white/[0.05] transition-all group">
-                    <Search className="w-4 h-4 text-slate-600 group-focus-within:text-brand-red transition-colors shrink-0" />
+            <div className="flex-1 max-w-xl px-1 md:px-8">
+                <div className="flex items-center gap-2 md:gap-3 h-10 md:h-11 bg-white/[0.03] border border-white/10 rounded-xl px-3 md:px-4 focus-within:border-brand-red/30 focus-within:bg-white/[0.05] transition-all group">
+                    <Search className="w-3.5 h-3.5 md:w-4 h-4 text-slate-600 group-focus-within:text-brand-red transition-colors shrink-0" />
                     <input
                         id="topbar-search"
                         type="text"
@@ -55,13 +55,13 @@ export default function TopBar({ user, isCollapsed, onToggleSidebar, onOpenMobil
                         onChange={(e) => setInputValue(e.target.value)}
                         placeholder="Search movies..."
                         aria-label="Search for a movie"
-                        className="w-full h-full bg-transparent text-sm text-white placeholder-slate-500 outline-none font-medium"
+                        className="w-full h-full bg-transparent text-[13px] md:text-sm text-white placeholder-slate-500 outline-none font-medium"
                     />
                 </div>
             </div>
 
-            {/* Right: Empty space to balance or additional actions if ever needed */}
-            <div className="w-8 md:w-20 hidden md:block" />
+            {/* Right: Balance spacer - hidden on mobile to maximize search width */}
+            <div className="hidden md:block w-20" />
         </header>
     );
 }
