@@ -1,8 +1,9 @@
 const config = {
     default: {
         override: {
-            wrapper: "cloudflare",
+            wrapper: "cloudflare-node",
             converter: "edge",
+            proxyExternalRequest: "fetch",
             incrementalCache: "dummy",
             tagCache: "dummy",
             queue: "dummy",
